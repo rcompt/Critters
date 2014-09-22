@@ -1,48 +1,25 @@
 <!doctype html>
 	<head?>
 		<title id="Front Page" 2-D Board></title>
+		<script src="js/cell.js" type="text/javascript"></script>
 		<script src="js/maphandler.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<img id="grassImg" src="Images/grass10-10.png" style="display: none;">
-		<img id="wallImg" src="Images/wall10-10.png" style="display: none;">
-		<img id="playerImg" src="Images/player10-10.png" style="display: none;">
-		<img id="outImg" src="Images/outOfBounds10-10.png" style="display: none;">
-		<img id="grass40Img" src="Images/grass40-40.png" style="display: none;">
-		<img id="wall40Img" src="Images/wall40-40.png" style="display: none;">
-		<img id="player40Img" src="Images/playerStand40-40.png" style="display: none;">
-		<img id="out40Img" src="Images/outOfBounds40-40.png" style="display: none;">
-		<img id="playerWalkImg1" src="Images/playerWalk-1-10-10.png" style="display: none;">
-		<img id="playerWalkImg2" src="Images/playerWalk-2-10-10.png" style="display: none;">
-
-		<canvas id="myCanvas" width="420" height="420" style="border:1px solid #000000;">
-		</canvas>
-
-		<P id="heightBox">Enter the height of map: <INPUT TYPE="number" id="height" value=40><BR><BR>
-		</P>
-		<P id="widthBox">Enter the width of map: <INPUT TYPE="number" id="width" value=40><BR><BR>
-		</P>
-		<P id="percentWall">Enter the wall percentage: <INPUT TYPE="number" id="wallP" value=45><BR><BR>
-		</P>
-		<button type="button" id="resetButton" onclick="resetArray()">Reset Array</button>
-		<button type="button" id="canvernsButton" onclick="makeCaverns()">Make Caverns</button>
-		<button type="button" id="startButton" onclick="startGame()">Start Game</button>
-		<button type="button" id="viewType" onclick="switchViewType()">Switch View</button>
-				
+	
+		<center>
+			<canvas id="myCanvas" width="420" height="420" style="border:1px solid #000000;"></canvas>
+			<button type="button" id="resetButton" onclick="resetArray()">Reset Array</button>
+		</center>
 		<script>
 			window.addEventListener( "keydown", doKeyDown );
-			var height = document.getElementById("height").value;
-			var width = document.getElementById("width").value;
-			var wallP = document.getElementById("wallP").value;
-			var map = new MapHandler(width, height, wallP, true);
+			var height = 40;
+			var width = 40;
+			var color = "#9B81CF";
+			var map = new MapHandler(width, height);
 			var viewType = 1;
 			draw(false);
 			function resetArray() {
 				draw(true);
-			}
-			function makeCaverns() {
-				map.MakeCaverns();
-				draw(false);
 			}
 			function switchViewType(){
 				if(viewType == 1){
@@ -111,209 +88,35 @@
 				}
 			}
 				
-			function animateWalk(oldLoc, newLoc){
-				var grassImg = document.getElementById("grassImg");
-				var wallImg = document.getElementById("wallImg");
-				var playerImg = document.getElementById("playerImg");
-				var playerWalkImg1 = document.getElementById("playerWalkImg1");
-				var playerWalkImg2 = document.getElementById("playerWalkImg2");
-				var outImg = document.getElementById("out40Img");
-				var diff = new Array(oldLoc[0] - newLoc[0],oldLoc[1] - newLoc[1])
-				
-				var height = document.getElementById("height").value;
-				var width = document.getElementById("width").value;
-				
-				
-				//console.log(oldLoc);
-				//console.log(newLoc);
-				for(i = 1; i <= 10; i++){
-					var c = document.getElementById("myCanvas");
-					var ctx = c.getContext("2d");
-					ctx.clearRect(0, 0, c.width, c.height);
-
-					if ( i % 2 == 0){
-						console.log("left");
-						console.log(diff);
-						console.log("POS Y: " + ((oldLoc[1]+1)*10 +(i*diff[1])).toString());
-						console.log("POS X: " + ((oldLoc[0] + 1)*10  +(i*diff[0])).toString());
-						for (row = 0; row < height; row++){
-							for (col = 0; col < width; col++){		
-								var val = map.getElemAt(row,col)
-								if (val == undefined){
-									ctx.drawImage(outImg,(col + 1)*40,(row + 1)*40);
-								}else if (val == 1){
-									ctx.drawImage(wallImg,(col + 1)*10,(row + 1)*10);
-								}else{
-									ctx.drawImage(grassImg,(col + 1)*10,(row + 1)*10);
-								}
-							}
-						}
-						ctx.drawImage(playerWalkImg1,(((oldLoc[1]+1)*10) +(i*diff[1])), (((oldLoc[0] + 1)*10)  +(i*diff[0])));
-						//sleep(10);
-					}else{
-						//console.log("right");
-						for (row = 0; row < height; row++){
-							for (col = 0; col < width; col++){
-								var val = map.getElemAt(row,col)
-								if (val == undefined){
-									ctx.drawImage(outImg,(col + 1)*40,(row + 1)*40);
-								}else if (val == 1){
-									ctx.drawImage(wallImg,(col + 1)*10,(row + 1)*10);
-								}else{
-									ctx.drawImage(grassImg,(col + 1)*10,(row + 1)*10);
-								}	
-							}
-						}
-						ctx.drawImage(playerWalkImg2,(((oldLoc[1]+1)*10) +(i*diff[1])), (((oldLoc[0] + 1)*10)  +(i*diff[0])));
-						//sleep(10);
-					}
-				}
-			}
-			
-			//function printGame(){
-			//	var c = document.getElementById("myCanvas");
-			//	var ctx = c.getContext("2d");
-			//	ctx.clearRect(0, 0, c.width, c.height);
-			//	var grassImg = document.getElementById("grass40Img"),
-			//	 wallImg = document.getElementById("wall40Img"),
-			//	 playerImg = document.getElementById("player40Img"),
-			//	 outImg = document.getElementById("out40Img"),
-			//	 playerLoc = map.getPlayerLoc();
-				 
-			//	viewType = 3;
-			//	map.printMap();
-			//	console.log(playerLoc);
-				<!--******!!!!!!Current Issue: Have to decide how to draw the corners!!!!-->
-				
-				//for (i = -2; i < 3; i++){
-				//	for (j = -2; j < 3; j++){
-				//		if (map.IsOutOfBound(playerLoc[0] + i, playerLoc[1] + j)){
-				//			ctx.drawImage(outImg,c.width / 2 + (40*i)-20, c.height / 2 + (40*j)-20);
-				//		}else{
-				//			var val = map.getElemAt(playerLoc[0] + i, playerLoc[0] + j);
-				//			if (val == 1){
-				//				ctx.drawImage(wallImg, c.height / 2 + (40*j)-20,c.width / 2 + (40*i)-20);
-				//			}else if(val == 2){
-				//				ctx.drawImage(playerImg,c.height / 2 + (40*j)-20,c.width / 2 + (40*i)-20);
-				//			}else{
-				//				ctx.drawImage(grassImg,c.height / 2 + (40*j)-20,c.width / 2 + (40*i)-20);
-				//			}
-				//		}
-				//	}
-				//} 
-				//ctx.drawImage(playerImg, c.width / 2 - 20, c.height / 2 - 20);
-			//	if(viewType == 1){
-			//		ctx.font = "10px Arial";
-			//		for (row = 0; row < height; row++){
-			//			for (col = 0; col < width; col++){
-			//				var val = map.getElemAt(row,col)
-			//				if (val != undefined){
-			//					if (val){
-			//						ctx.fillText(val.toString(),(col + 1)*10,(row + 1)*10);
-			//					}else{
-			//						ctx.fillText(" ",(col + 1)*10,(row + 1)*10);
-			//					}
-			//				}
-			//				
-			//			}
-			//		}
-			//	}else if (viewType == 2){
-			//		view.draw();					
-			//	}
-
-			//}
 			function draw(resetMap){
 				var c = document.getElementById("myCanvas");
 				var ctx = c.getContext("2d");
 				ctx.clearRect(0, 0, c.width, c.height);
+				ctx.fillStyle = color;
+				ctx.fillRect(0,0,420,420);
+				ctx.fillStyle = "#000000";
 				
-				<!--var map = maphandler.MapHandler(80, 40, 45, true);-->
-				<!--ctx.fillStyle = "#FF0000";-->
-				<!--ctx.fillRect(0,0,100,200);-->
-				var height = document.getElementById("height").value;
-				var width = document.getElementById("width").value;
-				var wallP = document.getElementById("wallP").value;
 				if (resetMap){
-					map = new MapHandler(width, height, wallP, true);
+					map = new MapHandler(width, height);
 				}
-				<!--var map = new Array(height);-->
-				<!--for (row = 0; row < height; row++){-->
-				<!--	map[row] = new Array(width);-->
-				<!--	for (col = 0; col < width; col++){-->
-				<!--		map[row][col] = 0;-->
-				<!--	}-->
-				<!--}-->
-				if(viewType == 1){
-					ctx.font = "10px Arial";
-					for (row = 0; row < height; row++){
-						for (col = 0; col < width; col++){
-							var val = map.getElemAt(row,col)
-							if (val != undefined){
-								if (val){
-									ctx.fillText(val.toString(),(col + 1)*10,(row + 1)*10);
-								}else{
-									ctx.fillText(" ",(col + 1)*10,(row + 1)*10);
-								}
-							}
-							
-						}
-					}
-				}else if (viewType == 2 || viewType == 3){
-					var grassImg = document.getElementById("grassImg");
-					var wallImg = document.getElementById("wallImg");
-					var playerImg = document.getElementById("playerImg");
-					var outImg = document.getElementById("outImg");
-					for (row = 0; row < height; row++){
-						for (col = 0; col < width; col++){
-							if(row == 0 || col == 0){
-								if(col != 0){
-									if(col == width-1){
-										ctx.drawImage(outImg,(col + 1)*10,(row)*10);
-										ctx.drawImage(outImg,(col + 2)*10,(row)*10);
-										ctx.drawImage(outImg,(col + 2)*10,(row+1)*10);									
-									}
-									ctx.drawImage(outImg,(col)*10,(row)*10);
-								}else if(row != 0){
-									if(row == height-1){
-										ctx.drawImage(outImg,(col+1)*10,(row+2)*10);
-										ctx.drawImage(outImg,(col)*10,(row+2)*10);
-										ctx.drawImage(outImg,(col)*10,(row+1)*10);										
-									}
-									ctx.drawImage(outImg,(col)*10,(row)*10);
-								}else{
-									ctx.drawImage(outImg,(col)*10,(row)*10);
-								}
-							}else if(row == height-1 || col == width-1){
-								if(col != width-1){
-									ctx.drawImage(outImg,(col + 1)*10,(row + 2)*10);
-								}else if(row != height-1){
-									ctx.drawImage(outImg,(col + 2)*10,(row + 1)*10);
-									
-								}else{
-									ctx.drawImage(outImg,(col + 2)*10,(row + 2)*10);
-									ctx.drawImage(outImg,(col + 2)*10,(row + 1)*10);
-									ctx.drawImage(outImg,(col + 1)*10,(row + 2)*10);
-								}								
-							}
-							if (map.isPlayerPresentAtLoc(row,col)){
-								ctx.drawImage(playerImg,(col + 1)*10,(row + 1)*10);
+
+
+				ctx.font = "10px Arial";
+				for (row = 0; row < height; row++){
+					for (col = 0; col < width; col++){
+						var val = map.getElemAt(row,col)
+						if (val != undefined){
+							if (val){
+								ctx.fillText(val.toString(),(col + 1)*10,(row + 1)*10);
 							}else{
-								var val = map.getElemAt(row,col)
-								if (val == undefined){
-									ctx.drawImage(outImg,(col + 1)*40,(row + 1)*40);
-								}else if (val == 1){
-									ctx.drawImage(wallImg,(col + 1)*10,(row + 1)*10);
-								}else{
-									ctx.drawImage(grassImg,(col + 1)*10,(row + 1)*10);
-								}
+								ctx.fillText(" ",(col + 1)*10,(row + 1)*10);
 							}
-							
-							
 						}
-					}					
+						
+					}
 				}
+
 				map.printMap();
-				<!--ctx.fillText("HelloWorld",height,width);-->
 			}
 		</script>
 
